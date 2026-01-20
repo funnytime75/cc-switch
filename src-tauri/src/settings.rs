@@ -37,6 +37,9 @@ pub struct AppSettings {
     /// 是否开机自启
     #[serde(default)]
     pub launch_on_startup: bool,
+    /// 是否静默启动（开机自启时最小化到托盘）
+    #[serde(default)]
+    pub silent_startup: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
 
@@ -85,6 +88,7 @@ impl Default for AppSettings {
             enable_claude_plugin_integration: false,
             skip_claude_onboarding: true,
             launch_on_startup: false,
+            silent_startup: false,
             language: None,
             claude_config_dir: None,
             codex_config_dir: None,

@@ -243,6 +243,8 @@
     "launchOnStartup": "Launch on Startup",
     "launchOnStartupDescription": "Automatically run CC Switch when system starts",
     "autoLaunchFailed": "Failed to set auto-launch",
+    "silentStartup": "Silent Startup",
+    "silentStartupDescription": "Minimize to system tray on startup instead of showing main window",
     "minimizeToTray": "Minimize to tray on close",
     "minimizeToTrayDescription": "When checked, clicking the close button will hide to system tray, otherwise the app will exit directly.",
     "enableClaudePluginIntegration": "Apply to Claude Code extension",

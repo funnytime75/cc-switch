@@ -24,8 +24,25 @@ export function WindowSettings({ settings, onChange }: WindowSettingsProps) {
           title={t("settings.launchOnStartup")}
           description={t("settings.launchOnStartupDescription")}
           checked={!!settings.launchOnStartup}
-          onCheckedChange={(value) => onChange({ launchOnStartup: value })}
+          onCheckedChange={(value) => {
+            // 关闭开机自启时，同时关闭静默启动
+            if (!value) {
+              onChange({ launchOnStartup: value, silentStartup: false });
+            } else {
+              onChange({ launchOnStartup: value });
+            }
+          }}
         />
+
+        {settings.launchOnStartup && (
+          <ToggleRow
+            icon={<AppWindow className="h-4 w-4 text-green-500" />}
+            title={t("settings.silentStartup")}
+            description={t("settings.silentStartupDescription")}
+            checked={!!settings.silentStartup}
+            onCheckedChange={(value) => onChange({ silentStartup: value })}
+          />
+        )}
 
         <ToggleRow
           icon={<AppWindow className="h-4 w-4 text-blue-500" />}

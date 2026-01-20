@@ -143,13 +143,17 @@ export function useSettings(): UseSettingsResult {
         // 保存到配置文件
         await saveMutation.mutateAsync(payload);
 
-        // 如果开机自启状态改变，调用系统 API
-        if (
-          payload.launchOnStartup !== undefined &&
-          payload.launchOnStartup !== data?.launchOnStartup
-        ) {
+        // 如果开机自启状态或静默启动状态改变，调用系统 API
+        const launchChanged = payload.launchOnStartup !== undefined &&
+          payload.launchOnStartup !== data?.launchOnStartup;
+        const silentChanged = payload.silentStartup !== undefined &&
+          payload.silentStartup !== data?.silentStartup;
+        if (launchChanged || silentChanged) {
           try {
-            await settingsApi.setAutoLaunch(payload.launchOnStartup);
+            await settingsApi.setAutoLaunch(
+              payload.launchOnStartup ?? false,
+              payload.silentStartup ?? false
+            );
           } catch (error) {
             console.error("Failed to update auto-launch:", error);
             toast.error(
@@ -181,11 +185,11 @@ export function useSettings(): UseSettingsResult {
             toast.error(
               nextSkipClaudeOnboarding
                 ? t("notifications.skipClaudeOnboardingFailed", {
-                    defaultValue: "跳过 Claude Code 初次安装确认失败",
-                  })
+                  defaultValue: "跳过 Claude Code 初次安装确认失败",
+                })
                 : t("notifications.clearClaudeOnboardingSkipFailed", {
-                    defaultValue: "恢复 Claude Code 初次安装确认失败",
-                  }),
+                  defaultValue: "恢复 Claude Code 初次安装确认失败",
+                }),
             );
           }
         }
@@ -255,13 +259,17 @@ export function useSettings(): UseSettingsResult {
 
         await settingsApi.setAppConfigDirOverride(sanitizedAppDir ?? null);
 
-        // 只在开机自启状态真正改变时调用系统 API
-        if (
-          payload.launchOnStartup !== undefined &&
-          payload.launchOnStartup !== data?.launchOnStartup
-        ) {
+        // 只在开机自启状态或静默启动状态真正改变时调用系统 API
+        const launchChanged = payload.launchOnStartup !== undefined &&
+          payload.launchOnStartup !== data?.launchOnStartup;
+        const silentChanged = payload.silentStartup !== undefined &&
+          payload.silentStartup !== data?.silentStartup;
+        if (launchChanged || silentChanged) {
           try {
-            await settingsApi.setAutoLaunch(payload.launchOnStartup);
+            await settingsApi.setAutoLaunch(
+              payload.launchOnStartup ?? false,
+              payload.silentStartup ?? false
+            );
           } catch (error) {
             console.error("Failed to update auto-launch:", error);
             toast.error(
@@ -290,11 +298,11 @@ export function useSettings(): UseSettingsResult {
             toast.error(
               nextSkipClaudeOnboarding
                 ? t("notifications.skipClaudeOnboardingFailed", {
-                    defaultValue: "跳过 Claude Code 初次安装确认失败",
-                  })
+                  defaultValue: "跳过 Claude Code 初次安装确认失败",
+                })
                 : t("notifications.clearClaudeOnboardingSkipFailed", {
-                    defaultValue: "恢复 Claude Code 初次安装确认失败",
-                  }),
+                  defaultValue: "恢复 Claude Code 初次安装确认失败",
+                }),
             );
           }
         }
@@ -303,7 +311,7 @@ export function useSettings(): UseSettingsResult {
         if (
           payload.enableClaudePluginIntegration !== undefined &&
           payload.enableClaudePluginIntegration !==
-            data?.enableClaudePluginIntegration
+          data?.enableClaudePluginIntegration
         ) {
           try {
             if (payload.enableClaudePluginIntegration) {

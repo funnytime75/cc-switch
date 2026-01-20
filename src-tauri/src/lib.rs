@@ -724,6 +724,23 @@ pub fn run() {
                 restore_proxy_state_on_startup(&state).await;
             });
 
+            // 静默启动检测：如果以 --minimized 参数启动，则隐藏主窗口
+            let is_silent_startup = std::env::args().any(|arg| arg == "--minimized");
+            if is_silent_startup {
+                log::info!("检测到 --minimized 参数，启动为静默模式");
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.hide();
+                    #[cfg(target_os = "windows")]
+                    {
+                        let _ = window.set_skip_taskbar(true);
+                    }
+                    #[cfg(target_os = "macos")]
+                    {
+                        tray::apply_tray_policy(app.handle(), false);
+                    }
+                }
+            }
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

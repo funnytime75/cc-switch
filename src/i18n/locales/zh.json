@@ -243,6 +243,8 @@
     "launchOnStartup": "开机自启",
     "launchOnStartupDescription": "随系统启动自动运行 CC Switch",
     "autoLaunchFailed": "设置开机自启失败",
+    "silentStartup": "静默启动",
+    "silentStartupDescription": "开机自启时最小化到系统托盘，不显示主窗口",
     "minimizeToTray": "关闭时最小化到托盘",
     "minimizeToTrayDescription": "勾选后点击关闭按钮会隐藏到系统托盘，取消则直接退出应用。",
     "enableClaudePluginIntegration": "应用到 Claude Code 插件",

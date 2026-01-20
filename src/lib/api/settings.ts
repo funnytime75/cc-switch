@@ -116,8 +116,8 @@ export const settingsApi = {
     await invoke("open_external", { url });
   },
 
-  async setAutoLaunch(enabled: boolean): Promise<boolean> {
-    return await invoke("set_auto_launch", { enabled });
+  async setAutoLaunch(enabled: boolean, silent: boolean = false): Promise<boolean> {
+    return await invoke("set_auto_launch", { enabled, silent });
   },
 
   async getAutoLaunchStatus(): Promise<boolean> {

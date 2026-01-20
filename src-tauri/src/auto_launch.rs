@@ -40,6 +40,30 @@ fn get_auto_launch() -> Result<AutoLaunch, AppError> {
     Ok(auto_launch)
 }
 
+/// 初始化 AutoLaunch 实例（带启动参数）
+fn get_auto_launch_with_args(args: &[&str]) -> Result<AutoLaunch, AppError> {
+    let app_name = "CC Switch";
+    let exe_path =
+        std::env::current_exe().map_err(|e| AppError::Message(format!("无法获取应用路径: {e}")))?;
+
+    // macOS 需要使用 .app bundle 路径，否则 AppleScript login item 会打开终端
+    #[cfg(target_os = "macos")]
+    let app_path = get_macos_app_bundle_path(&exe_path).unwrap_or(exe_path);
+
+    #[cfg(not(target_os = "macos"))]
+    let app_path = exe_path;
+
+    // 使用 AutoLaunchBuilder 消除平台差异，并传递启动参数
+    let auto_launch = AutoLaunchBuilder::new()
+        .set_app_name(app_name)
+        .set_app_path(&app_path.to_string_lossy())
+        .set_args(args)
+        .build()
+        .map_err(|e| AppError::Message(format!("创建 AutoLaunch 失败: {e}")))?;
+
+    Ok(auto_launch)
+}
+
 /// 启用开机自启
 pub fn enable_auto_launch() -> Result<(), AppError> {
     let auto_launch = get_auto_launch()?;
@@ -47,6 +71,16 @@ pub fn enable_auto_launch() -> Result<(), AppError> {
         .enable()
         .map_err(|e| AppError::Message(format!("启用开机自启失败: {e}")))?;
     log::info!("已启用开机自启");
+    Ok(())
+}
+
+/// 启用开机自启（静默模式，传递 --minimized 参数）
+pub fn enable_auto_launch_silent() -> Result<(), AppError> {
+    let auto_launch = get_auto_launch_with_args(&["--minimized"])?;
+    auto_launch
+        .enable()
+        .map_err(|e| AppError::Message(format!("启用开机自启失败: {e}")))?;
+    log::info!("已启用开机自启（静默模式）");
     Ok(())
 }
 

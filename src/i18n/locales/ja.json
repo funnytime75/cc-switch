@@ -243,6 +243,8 @@
     "launchOnStartup": "起動時に自動実行",
     "launchOnStartupDescription": "システム起動時に CC Switch を自動起動します",
     "autoLaunchFailed": "自動起動の設定に失敗しました",
+    "silentStartup": "サイレント起動",
+    "silentStartupDescription": "自動起動時にメインウィンドウを表示せず、システムトレイに最小化します",
     "minimizeToTray": "閉じるときトレイへ最小化",
     "minimizeToTrayDescription": "チェックすると閉じるボタンでトレイに隠し、オフならアプリを終了します。",
     "enableClaudePluginIntegration": "Claude Code 拡張に適用",

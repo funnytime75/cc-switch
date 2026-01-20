@@ -45,9 +45,15 @@ pub async fn set_app_config_dir_override(
 
 /// 设置开机自启
 #[tauri::command]
-pub async fn set_auto_launch(enabled: bool) -> Result<bool, String> {
+pub async fn set_auto_launch(enabled: bool, silent: bool) -> Result<bool, String> {
     if enabled {
-        crate::auto_launch::enable_auto_launch().map_err(|e| format!("启用开机自启失败: {e}"))?;
+        if silent {
+            crate::auto_launch::enable_auto_launch_silent()
+                .map_err(|e| format!("启用开机自启失败: {e}"))?;
+        } else {
+            crate::auto_launch::enable_auto_launch()
+                .map_err(|e| format!("启用开机自启失败: {e}"))?;
+        }
     } else {
         crate::auto_launch::disable_auto_launch().map_err(|e| format!("禁用开机自启失败: {e}"))?;
     }
