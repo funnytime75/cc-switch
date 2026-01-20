@@ -213,11 +213,16 @@ pub fn run() {
                 log::info!("ℹ No deep link URL found in args (this is expected on macOS when launched via system)");
             }
 
-            // Show and focus window regardless
-            if let Some(window) = app.get_webview_window("main") {
-                let _ = window.unminimize();
-                let _ = window.show();
-                let _ = window.set_focus();
+            // Show and focus window only if --minimized is NOT present in the new instance's args
+            let is_silent_call = args.iter().any(|arg| arg == "--minimized");
+            if !is_silent_call {
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.unminimize();
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
+            } else {
+                log::info!("ℹ New instance launched with --minimized, keeping existing instance hidden/minimized");
             }
         }));
     }
@@ -724,20 +729,24 @@ pub fn run() {
                 restore_proxy_state_on_startup(&state).await;
             });
 
-            // 静默启动检测：如果以 --minimized 参数启动，则隐藏主窗口
+            // 主窗口已在 tauri.conf.json 中设为 visible: false 以防止启动闪烁
+            // 如果不是静默启动，则在这里手动显示窗口
             let is_silent_startup = std::env::args().any(|arg| arg == "--minimized");
             if is_silent_startup {
-                log::info!("检测到 --minimized 参数，启动为静默模式");
+                log::info!("检测到 --minimized 参数，保持启动为静默模式");
+                #[cfg(target_os = "windows")]
                 if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.hide();
-                    #[cfg(target_os = "windows")]
-                    {
-                        let _ = window.set_skip_taskbar(true);
-                    }
-                    #[cfg(target_os = "macos")]
-                    {
-                        tray::apply_tray_policy(app.handle(), false);
-                    }
+                    let _ = window.set_skip_taskbar(true);
+                }
+                #[cfg(target_os = "macos")]
+                {
+                    tray::apply_tray_policy(app.handle(), false);
+                }
+            } else {
+                log::info!("正常启动模式，显示主窗口");
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.show();
+                    let _ = window.set_focus();
                 }
             }
 
